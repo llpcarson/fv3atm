@@ -515,6 +515,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: skebu_wts (:,:) => null()  !
     real (kind=kind_phys), pointer :: skebv_wts (:,:) => null()  !
     real (kind=kind_phys), pointer :: sfc_wts   (:,:) => null()  ! mg, sfc-perts
+    real (kind=kind_phys), pointer :: spp_wts_pbl   (:,:) => null()  ! spp-pbl-perts
 
     !--- aerosol surface emissions for Thompson microphysics
     real (kind=kind_phys), pointer :: nwfa2d  (:)     => null()  !< instantaneous water-friendly sfc aerosol source
@@ -1050,6 +1051,12 @@ module GFS_typedefs
                                               ! multiple patterns. It wasn't fully coded (and wouldn't have worked 
                                               ! with nlndp>1, so I just dropped it). If we want to code it properly, 
                                               ! we'd need to make this dim(6,5).
+    logical              :: do_spp
+    integer              :: spp_type
+    integer              :: n_var_spp
+    character(len=3)     :: spp_var_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def
+    real(kind=kind_phys) :: spp_prt_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def 
+
 !--- tracer handling
     character(len=32), pointer :: tracer_names(:) !< array of initialized tracers from dynamic core
     integer              :: ntrac           !< number of tracers
@@ -2799,6 +2806,13 @@ module GFS_typedefs
       Coupling%sfc_wts = clear_val
     endif
 
+    !--- stochastic spp perturbation option
+    if (Model%do_spp) then
+! --- allocate all of the wts arrays? yes, it's a run-time switch...  
+      allocate (Coupling%spp_wts_pbl  (IM,Model%levs))
+      Coupling%spp_wts_pbl = clear_val
+    endif
+
     !--- needed for Thompson's aerosol option
     if(Model%imp_physics == Model%imp_physics_thompson .and. Model%ltaerosol) then
       allocate (Coupling%nwfa2d (IM))
@@ -3310,6 +3324,8 @@ module GFS_typedefs
     integer :: skeb_npass   = 11
     integer :: lndp_type    = 0 
     integer :: n_var_lndp   =  0 
+    integer :: n_var_spp    =  0 
+    logical :: do_spp       = .false.
 
 !--- aerosol scavenging factors
     character(len=20) :: fscav_aero(20) = 'default'
@@ -3387,6 +3403,7 @@ module GFS_typedefs
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf, rbcr, shoc_parm, psauras, prauras, wminras,            &
                                do_sppt, do_shum, do_skeb, lndp_type,  n_var_lndp,           & 
+                               do_spp, n_var_spp,                                           & 
                           !--- Rayleigh friction
                                prslrd0, ral_ts,  ldiag_ugwp, do_ugwp, do_tofd,              &
                           ! --- Ferrier-Aligo
@@ -4003,6 +4020,8 @@ module GFS_typedefs
     Model%do_skeb          = do_skeb
     Model%lndp_type        = lndp_type
     Model%n_var_lndp       = n_var_lndp
+    Model%do_spp           = do_spp
+    Model%n_var_spp        = n_var_spp 
 
     !--- cellular automata options
     Model%nca              = nca
@@ -5058,6 +5077,8 @@ module GFS_typedefs
       print *, ' do_skeb           : ', Model%do_skeb
       print *, ' lndp_type         : ', Model%lndp_type
       print *, ' n_var_lndp         : ', Model%n_var_lndp
+      print *, ' do_spp            : ', Model%do_spp
+      print *, ' n_var_spp         : ', Model%n_var_spp
       print *, ' '
       print *, 'cellular automata'
       print *, ' nca               : ', Model%nca
