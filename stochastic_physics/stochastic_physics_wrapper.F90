@@ -20,6 +20,12 @@ module stochastic_physics_wrapper_mod
   real(kind=kind_phys), dimension(:,:), allocatable, save :: vfrac
   real(kind=kind_phys), dimension(:,:), allocatable, save :: stype
 
+  real(kind=kind_phys), dimension(:,:,:), allocatable, save :: smc 
+  real(kind=kind_phys), dimension(:,:,:), allocatable, save :: stc 
+  real(kind=kind_phys), dimension(:,:,:), allocatable, save :: slc 
+  real(kind=kind_phys), dimension(:,:), allocatable, save :: vfrac
+  real(kind=kind_phys), dimension(:,:), allocatable, save :: stype
+
   ! For cellular automata
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: ugrs
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: qgrs
@@ -59,6 +65,8 @@ module stochastic_physics_wrapper_mod
     use stochastic_physics,           only: init_stochastic_physics, run_stochastic_physics
     use cellular_automata_global_mod, only: cellular_automata_global
     use cellular_automata_sgs_mod,    only: cellular_automata_sgs
+    use lndp_apply_perts_mod, only: lndp_apply_perts
+    use namelist_soilveg, only: maxsmc
 
     implicit none
 
@@ -202,7 +210,7 @@ module stochastic_physics_wrapper_mod
              endif 
              call lndp_apply_perts( GFS_Control%blksz, GFS_Control%lsm,  GFS_Control%lsoil, GFS_Control%dtf, & 
                              GFS_Control%n_var_lndp, GFS_Control%lndp_var_list, GFS_Control%lndp_prt_list, & 
-                             sfc_wts, xlon, xlat, stype, param_update_flag, smc, slc,stc, vfrac, ierr) 
+                             sfc_wts, xlon, xlat, stype, maxsmc,param_update_flag, smc, slc,stc, vfrac, ierr) 
              if (ierr/=0)  then 
                     write(6,*) 'call to GFS_apply_lndp failed'
                     return
