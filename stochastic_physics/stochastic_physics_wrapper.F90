@@ -20,12 +20,6 @@ module stochastic_physics_wrapper_mod
   real(kind=kind_phys), dimension(:,:), allocatable, save :: vfrac
   real(kind=kind_phys), dimension(:,:), allocatable, save :: stype
 
-  real(kind=kind_phys), dimension(:,:,:), allocatable, save :: smc 
-  real(kind=kind_phys), dimension(:,:,:), allocatable, save :: stc 
-  real(kind=kind_phys), dimension(:,:,:), allocatable, save :: slc 
-  real(kind=kind_phys), dimension(:,:), allocatable, save :: vfrac
-  real(kind=kind_phys), dimension(:,:), allocatable, save :: stype
-
   ! For cellular automata
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: ugrs
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: qgrs
@@ -57,7 +51,6 @@ module stochastic_physics_wrapper_mod
 #endif
 
     use GFS_typedefs,       only: GFS_control_type, GFS_data_type
-    use lndp_apply_perts_mod, only: lndp_apply_perts
     use mpp_mod,            only: FATAL, mpp_error
     use block_control_mod,  only: block_control_type
     use atmosphere_mod,     only: Atm, mygrid
