@@ -3922,12 +3922,6 @@
   dimensions =  (number_of_land_surface_variables_perturbed) 
   type = character
   kind = len=3
-[spp_type]
-  standard_name = index_for_stochastic_spp_perturbation_type
-  long_name = index for stochastic spp perturbations type
-  units = index
-  dimensions = ()
-  type = integer
 [n_var_spp]
   standard_name = number_of_spp_schemes_perturbed
   long_name = number of spp schemes perturbed

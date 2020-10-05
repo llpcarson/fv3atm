@@ -1055,7 +1055,6 @@ module GFS_typedefs
                                               ! with nlndp>1, so I just dropped it). If we want to code it properly, 
                                               ! we'd need to make this dim(6,5).
     logical              :: do_spp
-    integer              :: spp_type
     integer              :: n_var_spp
     character(len=3)     :: spp_var_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def
     real(kind=kind_phys) :: spp_prt_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def 
