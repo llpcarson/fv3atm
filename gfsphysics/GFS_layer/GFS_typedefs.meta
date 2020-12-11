@@ -5930,6 +5930,14 @@
   dimensions = (horizontal_dimension,vertical_dimension)
   type = real
   kind = kind_phys
+[spp_wts_pbl]
+  standard_name = weights_for_stochastic_spp_pbl_perturbation_flipped
+  long_name = weights for stochastic spp pbl perturbation, flipped
+  units = none
+  dimensions = (horizontal_dimension,vertical_dimension)
+  type = real
+  kind = kind_phys
+  active = (index_for_stochastic_land_surface_perturbation_type .ne. 0)
 [zmtnblck]
   standard_name = level_of_dividing_streamline
   long_name = level of the dividing streamline

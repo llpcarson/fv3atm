@@ -91,7 +91,7 @@ module stochastic_physics_wrapper_mod
             GFS_Control%spp_var_list, GFS_Control%spp_prt_list, GFS_Control%do_spp,    &
             GFS_Control%ak, GFS_Control%bk, nthreads, GFS_Control%master, GFS_Control%communicator, ierr)
             if (ierr/=0)  then 
-                    write(6,*) 'call to init_stochastic_physics failed'
+                    write(6,*) 'call to init_stochastic_physics failed', ierr
                     return
             endif
       end if
@@ -136,6 +136,7 @@ module stochastic_physics_wrapper_mod
             xlat(nb,1:GFS_Control%blksz(nb)) = GFS_Data(nb)%Grid%xlat(:)
             xlon(nb,1:GFS_Control%blksz(nb)) = GFS_Data(nb)%Grid%xlon(:)
          end do
+         write(0,*)'xlat ',minval(xlat(:,:)), maxval(xlat(:,:))
          if (GFS_Control%do_sppt) then
             allocate(sppt_wts(1:Atm_block%nblks,maxval(GFS_Control%blksz),1:GFS_Control%levs))
          end if
@@ -176,6 +177,18 @@ module stochastic_physics_wrapper_mod
             end do
             deallocate(skebu_wts)
             deallocate(skebv_wts)
+         end if
+         if (GFS_Control%do_spp) then
+            DO v=1,GFS_Control%n_var_spp
+               select case (trim(GFS_Control%spp_var_list(v)))
+               case('pbl')
+                 do nb=1,Atm_block%nblks
+                     GFS_Data(nb)%Coupling%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                     GFS_Data(nb)%Intdiag%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                 end do
+               end select
+            ENDDO
+            deallocate(spp_wts)
          end if
          if (GFS_Control%lndp_type .EQ. 2) then ! save wts, and apply lndp scheme 
              do nb=1,Atm_block%nblks
@@ -224,17 +237,6 @@ module stochastic_physics_wrapper_mod
          deallocate(xlat)
          deallocate(xlon)
       end if
-         if (GFS_Control%do_spp) then
-            DO v=1,GFS_Control%n_var_spp
-               select case (trim(GFS_Control%spp_var_list(v)))
-               case('pbl')
-                 do nb=1,Atm_block%nblks
-                     GFS_Data(nb)%Coupling%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
-                 end do
-               end select
-            ENDDO
-            deallocate(spp_wts)
-         end if
 
     endif initalize_stochastic_physics
 
