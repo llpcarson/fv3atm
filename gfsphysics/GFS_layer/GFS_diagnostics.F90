@@ -1986,12 +1986,12 @@ module GFS_diagnostics
     idx = idx + 1
     ExtDiag(idx)%axes = 3
     ExtDiag(idx)%name = 'spp_wts_pbl'
-    ExtDiag(idx)%desc = 'perturbation velocity'
+    ExtDiag(idx)%desc = 'spp pbl perturbation wts'
     ExtDiag(idx)%unit = 'm/s'
     ExtDiag(idx)%mod_name = 'gfs_phys'
     allocate (ExtDiag(idx)%data(nblks))
     do nb = 1,nblks
-      ExtDiag(idx)%data(nb)%var3 => Coupling(nb)%spp_wts_pbl(:,:) 
+      ExtDiag(idx)%data(nb)%var3 => IntDiag(nb)%spp_wts_pbl(:,:) 
     enddo
 
 
@@ -2030,7 +2030,7 @@ module GFS_diagnostics
     idx = idx + 1
     ExtDiag(idx)%axes = 3
     ExtDiag(idx)%name = 'sppt_wts'
-    ExtDiag(idx)%desc = 'perturbation velocity'
+    ExtDiag(idx)%desc = 'sppt perturbation wts'
     ExtDiag(idx)%unit = 'm/s'
     ExtDiag(idx)%mod_name = 'gfs_phys'
     allocate (ExtDiag(idx)%data(nblks))
@@ -2041,7 +2041,7 @@ module GFS_diagnostics
     idx = idx + 1
     ExtDiag(idx)%axes = 3
     ExtDiag(idx)%name = 'shum_wts'
-    ExtDiag(idx)%desc = 'perturbation velocity'
+    ExtDiag(idx)%desc = 'shum perturbation wts'
     ExtDiag(idx)%unit = 'm/s'
     ExtDiag(idx)%mod_name = 'gfs_phys'
     allocate (ExtDiag(idx)%data(nblks))
