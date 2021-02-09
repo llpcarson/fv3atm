@@ -180,7 +180,6 @@ module stochastic_physics_wrapper_mod
                  end do
                end select
             ENDDO
-            deallocate(spp_wts)
          end if
          if (GFS_Control%lndp_type .EQ. 2) then ! save wts, and apply lndp scheme 
              do nb=1,Atm_block%nblks
@@ -340,6 +339,9 @@ module stochastic_physics_wrapper_mod
           if (allocated(stype)) deallocate(stype)
           if (allocated(vfrac)) deallocate(vfrac)
       endif
+      if (GFS_Control%do_spp) then
+         if (allocated(spp_wts)) deallocate(spp_wts)
+      end if
       call finalize_stochastic_physics()
    endif
   end subroutine stochastic_physics_wrapper_end
