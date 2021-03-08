@@ -2101,7 +2101,15 @@
   dimensions = (horizontal_dimension,vertical_dimension)
   type = real
   kind = kind_phys
-  active = (index_for_stochastic_land_surface_perturbation_type .ne. 0)
+  active = (flag_for_stochastic_spp_option)
+[spp_wts_sfc]
+  standard_name = weights_for_stochastic_spp_sfc_perturbation
+  long_name = weights for stochastic spp sfc perturbation
+  units = none
+  dimensions = (horizontal_dimension,vertical_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_stochastic_spp_option)
 [dqdti]
   standard_name = instantaneous_water_vapor_specific_humidity_tendency_due_to_convection
   long_name = instantaneous moisture tendency due to convection
@@ -6465,7 +6473,15 @@
   dimensions = (horizontal_dimension,vertical_dimension)
   type = real
   kind = kind_phys
-  active = (index_for_stochastic_land_surface_perturbation_type .ne. 0)
+  active = (flag_for_stochastic_spp_option)
+[spp_wts_sfc]
+  standard_name = weights_for_stochastic_spp_sfc_perturbation_flipped
+  long_name = weights for stochastic spp sfc perturbation, flipped
+  units = none
+  dimensions = (horizontal_dimension,vertical_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_stochastic_spp_option)
 [zmtnblck]
   standard_name = level_of_dividing_streamline
   long_name = level of the dividing streamline

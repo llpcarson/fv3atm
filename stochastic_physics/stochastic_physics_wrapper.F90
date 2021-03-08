@@ -178,6 +178,11 @@ module stochastic_physics_wrapper_mod
                      GFS_Data(nb)%Coupling%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
                      GFS_Data(nb)%Intdiag%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
                  end do
+               case('sfc')
+                 do nb=1,Atm_block%nblks
+                     GFS_Data(nb)%Coupling%spp_wts_sfc(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                     GFS_Data(nb)%Intdiag%spp_wts_sfc(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                 end do
                end select
             ENDDO
          end if
@@ -316,7 +321,7 @@ module stochastic_physics_wrapper_mod
 
   type(GFS_control_type),   intent(inout) :: GFS_Control
 
-  if (GFS_Control%do_sppt .OR. GFS_Control%do_shum .OR. GFS_Control%do_skeb .OR. (GFS_Control%lndp_type .GT. 0) ) then
+  if (GFS_Control%do_sppt .OR. GFS_Control%do_shum .OR. GFS_Control%do_skeb .OR. (GFS_Control%lndp_type .GT. 0) .OR. GFS_Control%do_spp) then
       if (allocated(xlat)) deallocate(xlat)
       if (allocated(xlon)) deallocate(xlon)
       if (GFS_Control%do_sppt) then
