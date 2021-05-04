@@ -1548,6 +1548,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: skebv_wts(:,:) => null()   !< 10 meter v wind speed
     real (kind=kind_phys), pointer :: sppt_wts(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: shum_wts(:,:)  => null()   !<
+    real (kind=kind_phys), pointer :: sfc_wts(:,:)   => null()   !<
     real (kind=kind_phys), pointer :: spp_wts_pbl(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: spp_wts_sfc(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: zmtnblck(:)    => null()   !<mountain blocking evel
@@ -5725,6 +5726,7 @@ module GFS_typedefs
     allocate (Diag%skebv_wts(IM,Model%levs))
     allocate (Diag%sppt_wts(IM,Model%levs))
     allocate (Diag%shum_wts(IM,Model%levs))
+    allocate (Diag%sfc_wts(IM,Model%n_var_lndp))
     allocate (Diag%spp_wts_pbl(IM,Model%levs))
     allocate (Diag%spp_wts_sfc(IM,Model%levs))
     allocate (Diag%zmtnblck(IM))    
