@@ -1121,7 +1121,6 @@ module GFS_typedefs
                                               ! we'd need to make this dim(6,5).
     logical              :: do_spp
     integer              :: n_var_spp 
-    integer              :: spp_mp           ! options (1 2 4 3 5 6 7) for which parameter to perturb; 0: none
     character(len=3)     :: spp_var_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def
     real(kind=kind_phys) :: spp_prt_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def 
 
@@ -3495,7 +3494,6 @@ module GFS_typedefs
     integer :: lndp_type    = 0 
     integer :: n_var_lndp   =  0 
     integer :: n_var_spp    =  0
-    integer :: spp_mp       =  0 
     logical :: do_spp       = .false.
 
 !--- aerosol scavenging factors
@@ -3582,7 +3580,7 @@ module GFS_typedefs
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf, rbcr, shoc_parm, psauras, prauras, wminras,            &
                                do_sppt, do_shum, do_skeb, lndp_type,  n_var_lndp,           & 
-                               do_spp, n_var_spp, spp_mp,                                   & 
+                               do_spp, n_var_spp,                                           & 
                           !--- Rayleigh friction
                                prslrd0, ral_ts,  ldiag_ugwp, do_ugwp, do_tofd,              &
                           ! --- Ferrier-Aligo
@@ -4245,7 +4243,6 @@ module GFS_typedefs
     Model%n_var_lndp       = n_var_lndp
     Model%do_spp           = do_spp
     Model%n_var_spp        = n_var_spp 
-    Model%spp_mp           = spp_mp
 
     !--- cellular automata options
     Model%nca              = nca
@@ -5349,7 +5346,6 @@ module GFS_typedefs
       print *, ' n_var_lndp         : ', Model%n_var_lndp
       print *, ' do_spp            : ', Model%do_spp
       print *, ' n_var_spp         : ', Model%n_var_spp
-      print *, ' spp_mp            : ', Model%spp_mp
       print *, ' '
       print *, 'cellular automata'
       print *, ' nca               : ', Model%nca
