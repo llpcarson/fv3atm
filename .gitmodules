@@ -9,4 +9,4 @@
 [submodule "ccpp/physics"]
 	path = ccpp/physics
 	url = https://github.com/llpcarson/ccpp-physics
-	branch = v1_spp
+	branch = add_spp
