@@ -2110,6 +2110,14 @@
   type = real
   kind = kind_phys
   active = (flag_for_stochastic_spp_option)
+[spp_wts_mp]
+  standard_name = weights_for_stochastic_spp_mp_perturbation
+  long_name = weights for stochastic spp mp perturbation
+  units = none
+  dimensions = (horizontal_dimension,vertical_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_stochastic_spp_option)
 [dqdti]
   standard_name = instantaneous_water_vapor_specific_humidity_tendency_due_to_convection
   long_name = instantaneous moisture tendency due to convection
@@ -6477,6 +6485,14 @@
 [spp_wts_sfc]
   standard_name = weights_for_stochastic_spp_sfc_perturbation_flipped
   long_name = weights for stochastic spp sfc perturbation, flipped
+  units = none
+  dimensions = (horizontal_dimension,vertical_dimension)
+  type = real
+  kind = kind_phys
+  active = (flag_for_stochastic_spp_option)
+[spp_wts_mp]
+  standard_name = weights_for_stochastic_spp_mp_perturbation_flipped
+  long_name = weights for stochastic spp mp perturbation, flipped
   units = none
   dimensions = (horizontal_dimension,vertical_dimension)
   type = real

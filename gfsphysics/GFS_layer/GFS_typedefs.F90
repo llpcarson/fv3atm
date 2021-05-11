@@ -525,6 +525,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: sfc_wts   (:,:) => null()  ! mg, sfc-perts
     real (kind=kind_phys), pointer :: spp_wts_pbl   (:,:) => null()  ! spp-pbl-perts
     real (kind=kind_phys), pointer :: spp_wts_sfc   (:,:) => null()  ! spp-sfc-perts
+    real (kind=kind_phys), pointer :: spp_wts_mp    (:,:) => null()  ! spp-mp-perts
 
     !--- aerosol surface emissions for Thompson microphysics
     real (kind=kind_phys), pointer :: nwfa2d  (:)     => null()  !< instantaneous water-friendly sfc aerosol source
@@ -1119,7 +1120,7 @@ module GFS_typedefs
                                               ! with nlndp>1, so I just dropped it). If we want to code it properly, 
                                               ! we'd need to make this dim(6,5).
     logical              :: do_spp
-    integer              :: n_var_spp
+    integer              :: n_var_spp 
     character(len=3)     :: spp_var_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def
     real(kind=kind_phys) :: spp_prt_list(6)  ! dimension here must match  n_var_max_spp in  stochy_nml_def 
 
@@ -1608,6 +1609,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: shum_wts(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: spp_wts_pbl(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: spp_wts_sfc(:,:)  => null()   !<
+    real (kind=kind_phys), pointer :: spp_wts_mp(:,:)   => null()   !<
     real (kind=kind_phys), pointer :: zmtnblck(:)    => null()   !<mountain blocking evel
     real (kind=kind_phys), pointer :: du3dt (:,:,:)  => null()   !< u momentum change due to physics
     real (kind=kind_phys), pointer :: dv3dt (:,:,:)  => null()   !< v momentum change due to physics
@@ -2937,6 +2939,8 @@ module GFS_typedefs
       Coupling%spp_wts_pbl = clear_val
       allocate (Coupling%spp_wts_sfc  (IM,Model%levs))
       Coupling%spp_wts_sfc = clear_val
+      allocate (Coupling%spp_wts_mp   (IM,Model%levs))
+      Coupling%spp_wts_mp = clear_val
     endif
 
     !--- needed for Thompson's aerosol option
@@ -3489,7 +3493,7 @@ module GFS_typedefs
     integer :: skeb_npass   = 11
     integer :: lndp_type    = 0 
     integer :: n_var_lndp   =  0 
-    integer :: n_var_spp    =  0 
+    integer :: n_var_spp    =  0
     logical :: do_spp       = .false.
 
 !--- aerosol scavenging factors
@@ -5869,6 +5873,7 @@ module GFS_typedefs
     allocate (Diag%shum_wts(IM,Model%levs))
     allocate (Diag%spp_wts_pbl(IM,Model%levs))
     allocate (Diag%spp_wts_sfc(IM,Model%levs))
+    allocate (Diag%spp_wts_mp(IM,Model%levs))
     allocate (Diag%zmtnblck(IM))    
     allocate (Diag%ca1      (IM))
     allocate (Diag%ca2      (IM))
@@ -6197,6 +6202,7 @@ module GFS_typedefs
     Diag%shum_wts   = zero
     Diag%spp_wts_pbl = zero
     Diag%spp_wts_sfc = zero
+    Diag%spp_wts_mp  = zero
     Diag%zmtnblck   = zero
 
 #ifdef CCPP
