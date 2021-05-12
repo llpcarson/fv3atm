@@ -12,6 +12,7 @@ module stochastic_physics_wrapper_mod
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: skebu_wts
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: skebv_wts
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: sfc_wts
+  real(kind=kind_phys), dimension(:,:,:,:), allocatable, save :: spp_wts
 
   integer, save :: lsoil = -999
   real(kind=kind_phys), dimension(:,:,:), allocatable, save :: smc
@@ -81,7 +82,7 @@ module stochastic_physics_wrapper_mod
     type(block_control_type), intent(inout) :: Atm_block
     integer,                  intent(out)   :: ierr
 
-    integer :: nthreads, nb
+    integer :: nthreads, nb, v
     logical :: param_update_flag
 
 #ifdef _OPENMP
@@ -94,7 +95,7 @@ module stochastic_physics_wrapper_mod
     ! Initialize
     initalize_stochastic_physics: if (GFS_Control%kdt==0) then
 
-      if (GFS_Control%do_sppt .OR. GFS_Control%do_shum .OR. GFS_Control%do_skeb .OR. (GFS_Control%lndp_type .GT. 0) ) then
+      if (GFS_Control%do_sppt .OR. GFS_Control%do_shum .OR. GFS_Control%do_skeb .OR. (GFS_Control%lndp_type .GT. 0) .OR. GFS_Control%do_spp ) then
          allocate(xlat(1:Atm_block%nblks,maxval(GFS_Control%blksz)))
          allocate(xlon(1:Atm_block%nblks,maxval(GFS_Control%blksz)))
          do nb=1,Atm_block%nblks
@@ -106,6 +107,7 @@ module stochastic_physics_wrapper_mod
             GFS_Control%input_nml_file, GFS_Control%fn_nml, GFS_Control%nlunit, xlon, xlat, GFS_Control%do_sppt, GFS_Control%do_shum,                &
             GFS_Control%do_skeb, GFS_Control%lndp_type, GFS_Control%n_var_lndp, GFS_Control%use_zmtnblck, GFS_Control%skeb_npass, &
             GFS_Control%lndp_var_list, GFS_Control%lndp_prt_list,    &
+            GFS_Control%n_var_spp, FS_Control%spp_var_list, GFS_Control%spp_prt_list, GFS_Control%do_spp, &
             GFS_Control%ak, GFS_Control%bk, nthreads, GFS_Control%master, GFS_Control%communicator, ierr)
             if (ierr/=0)  then
                     write(6,*) 'call to init_stochastic_physics failed'
@@ -121,6 +123,9 @@ module stochastic_physics_wrapper_mod
       if (GFS_Control%do_skeb) then
          allocate(skebu_wts(1:Atm_block%nblks,maxval(GFS_Control%blksz),1:GFS_Control%levs))
          allocate(skebv_wts(1:Atm_block%nblks,maxval(GFS_Control%blksz),1:GFS_Control%levs))
+      end if
+      if (GFS_Control%do_spp) then
+         allocate(spp_wts(1:Atm_block%nblks,maxval(GFS_Control%blksz),1:GFS_Control%levs,1:GFS_Control%n_var_spp)))
       end if
       if ( GFS_Control%lndp_type .EQ. 2 ) then ! this scheme updates through forecast
          allocate(sfc_wts(1:Atm_block%nblks,maxval(GFS_Control%blksz),1:GFS_Control%n_var_lndp))
@@ -170,9 +175,9 @@ module stochastic_physics_wrapper_mod
       endif
 
     else initalize_stochastic_physics
-      if (GFS_Control%do_sppt .OR. GFS_Control%do_shum .OR. GFS_Control%do_skeb .OR. (GFS_Control%lndp_type .EQ. 2) ) then
+      if (GFS_Control%do_sppt .OR. GFS_Control%do_shum .OR. GFS_Control%do_skeb .OR. (GFS_Control%lndp_type .EQ. 2 .OR. GFS_Control%do_spp ) ) then
          call run_stochastic_physics(GFS_Control%levs, GFS_Control%kdt, GFS_Control%fhour, GFS_Control%blksz, &
-                                 sppt_wts=sppt_wts, shum_wts=shum_wts, skebu_wts=skebu_wts, skebv_wts=skebv_wts, sfc_wts=sfc_wts, &
+                                 sppt_wts=sppt_wts, shum_wts=shum_wts, skebu_wts=skebu_wts, skebv_wts=skebv_wts, spp_wts=spp_wts, sfc_wts=sfc_wts, &
                                  nthreads=nthreads)
          ! Copy contiguous data back
          if (GFS_Control%do_sppt) then
@@ -190,6 +195,27 @@ module stochastic_physics_wrapper_mod
                 GFS_Data(nb)%Coupling%skebu_wts(:,:) = skebu_wts(nb,1:GFS_Control%blksz(nb),:)
                 GFS_Data(nb)%Coupling%skebv_wts(:,:) = skebv_wts(nb,1:GFS_Control%blksz(nb),:)
             end do
+         end if
+         if (GFS_Control%do_spp) then
+            DO v=1,GFS_Control%n_var_spp
+               select case (trim(GFS_Control%spp_var_list(v)))
+               case('pbl')
+                 do nb=1,Atm_block%nblks
+                     GFS_Data(nb)%Coupling%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                     GFS_Data(nb)%Intdiag%spp_wts_pbl(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                 end do
+               case('sfc')
+                 do nb=1,Atm_block%nblks
+                     GFS_Data(nb)%Coupling%spp_wts_sfc(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                     GFS_Data(nb)%Intdiag%spp_wts_sfc(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                 end do
+               case('mp')
+                 do nb=1,Atm_block%nblks
+                     GFS_Data(nb)%Coupling%spp_wts_mp(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                     GFS_Data(nb)%Intdiag%spp_wts_mp(:,:) = spp_wts(nb,1:GFS_Control%blksz(nb),:,v)
+                 end do
+               end select
+            ENDDO
          end if
          if (GFS_Control%lndp_type .EQ. 2) then ! save wts, and apply lndp scheme
              do nb=1,Atm_block%nblks
