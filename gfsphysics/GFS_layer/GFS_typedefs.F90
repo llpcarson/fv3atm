@@ -526,6 +526,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: spp_wts_pbl   (:,:) => null()  ! spp-pbl-perts
     real (kind=kind_phys), pointer :: spp_wts_sfc   (:,:) => null()  ! spp-sfc-perts
     real (kind=kind_phys), pointer :: spp_wts_mp    (:,:) => null()  ! spp-mp-perts
+    real (kind=kind_phys), pointer :: spp_wts_rad   (:,:) => null()  ! spp-rad-perts
 
     !--- aerosol surface emissions for Thompson microphysics
     real (kind=kind_phys), pointer :: nwfa2d  (:)     => null()  !< instantaneous water-friendly sfc aerosol source
@@ -1610,6 +1611,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: spp_wts_pbl(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: spp_wts_sfc(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: spp_wts_mp(:,:)   => null()   !<
+    real (kind=kind_phys), pointer :: spp_wts_rad(:,:)  => null()   !<
     real (kind=kind_phys), pointer :: zmtnblck(:)    => null()   !<mountain blocking evel
     real (kind=kind_phys), pointer :: du3dt (:,:,:)  => null()   !< u momentum change due to physics
     real (kind=kind_phys), pointer :: dv3dt (:,:,:)  => null()   !< v momentum change due to physics
@@ -2941,6 +2943,8 @@ module GFS_typedefs
       Coupling%spp_wts_sfc = clear_val
       allocate (Coupling%spp_wts_mp   (IM,Model%levs))
       Coupling%spp_wts_mp = clear_val
+      allocate (Coupling%spp_wts_rad   (IM,Model%levs))
+      Coupling%spp_wts_rad = clear_val
     endif
 
     !--- needed for Thompson's aerosol option
@@ -5874,6 +5878,7 @@ module GFS_typedefs
     allocate (Diag%spp_wts_pbl(IM,Model%levs))
     allocate (Diag%spp_wts_sfc(IM,Model%levs))
     allocate (Diag%spp_wts_mp(IM,Model%levs))
+    allocate (Diag%spp_wts_rad(IM,Model%levs))
     allocate (Diag%zmtnblck(IM))    
     allocate (Diag%ca1      (IM))
     allocate (Diag%ca2      (IM))
@@ -6203,6 +6208,7 @@ module GFS_typedefs
     Diag%spp_wts_pbl = zero
     Diag%spp_wts_sfc = zero
     Diag%spp_wts_mp  = zero
+    Diag%spp_wts_rad = zero
     Diag%zmtnblck   = zero
 
 #ifdef CCPP
